@@ -8,6 +8,7 @@ import configparser
 import os
 import json
 import datetime
+import time
 
 workdir = os.path.dirname(os.path.realpath(__file__))
 config = configparser.ConfigParser()
@@ -98,6 +99,12 @@ for device in devices:
         print(datetime.datetime.now(), device, " : ", data)
 
         mqtt_client.publish(config[device].get("topic"), data)
+        mqtt_client.publish(config[device].get("temp_topic"), temperature)
+        time.sleep(0.05)
+        mqtt_client.publish(config[device].get("humi_topic"), humidity)
+        time.sleep(0.05)
+        mqtt_client.publish(config[device].get("bat_topic"), battery)
+        time.sleep(0.05)
         mqtt_client.publish(config[device].get("availability_topic"), "online")
     except bluepy.btle.BTLEException:
         mqtt_client.publish(config[device].get("availability_topic"), "offline")
